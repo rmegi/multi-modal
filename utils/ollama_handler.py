@@ -3,17 +3,22 @@ import base64
 import os
 import time
 import hashlib
+import ollama
+import json
 from utils.prompts import gemma3_12b_prompt
 
 
+MAX_IMAGES = 2
+
+
 class OllamaHandler:
-    def __init__(self, model="llava:latest", base_url=None):
+    def __init__(self, model="gemma3:12b", base_url=None):
         self.model = model
         self.base_url = base_url or os.getenv(
             "OLLAMA_BASE_URL", "http://192.168.68.201:11434"
         )
         self.chat_url = f"{self.base_url}/api/chat"
-        self.messages_history = [{"role": "system", "content": gemma3_12b_prompt}]
+        self.clear_chat()
         self._last_image_hash = None
 
     def _hash_image(self, image_bytes):
@@ -28,8 +33,6 @@ class OllamaHandler:
 
     def ask(self, prompt, image_path=None, temperature=0.1):
         user_message = {"role": "user", "content": prompt}
-
-        # Add image if provided
         if image_path:
             try:
                 with open(image_path, "rb") as img_file:
@@ -47,38 +50,27 @@ class OllamaHandler:
             except Exception as e:
                 print(f"❌ Failed to read image: {e}")
                 return None
-
-        payload = {
-            "model": self.model,
-            "messages": self.messages_history + [user_message],
-            "stream": False,
-            "temperature": temperature,
-            "keep_alive": "10m",
-        }
-
+        self.messages_history.append(user_message)
+        answer = None
         try:
             start_time = time.perf_counter()
-            response = httpx.post(
-                self.chat_url, json=payload, timeout=20.0  # hard timeout
-            )
-            response.raise_for_status()
+            response = ollama.chat(model=self.model, options={'temperature':temperature}, format="json", messages=self.messages_history + [user_message])
             duration = time.perf_counter() - start_time
             print(f"✅ Ollama responded in {duration:.2f}s")
-
-            result = response.json()
-            answer = result.get("message", {}).get("content", "")
-
-            self.messages_history.append({"role": "user", "content": prompt})
-            self.messages_history.append({"role": "assistant", "content": answer})
-
-            return answer
-
-        except httpx.TimeoutException:
-            print("❌ Ollama request timed out (>20s).")
-            return None
-        except httpx.HTTPStatusError as e:
-            print(f"❌ Ollama HTTP error: {e}")
-            return None
+            answer = json.loads(response.get("message", {}).get("content", ""))
+            self.messages_history.append({"role": "assistant", "content": json.dumps(answer, indent=2)})
+            print([m.keys() for m in self.messages_history])
         except Exception as e:
             print(f"❌ Unexpected error: {e}")
-            return None
+            answer = str(e)
+        
+        if sum([len(m.get("images", [])) for m in self.messages_history]) > MAX_IMAGES:
+            img_cnt = 0
+            self.messages_history.reverse()
+            for m in self.messages_history:
+                if "images" in m and img_cnt > MAX_IMAGES:
+                    del m["images"]
+                img_cnt += len(m.get("images", []))
+            self.messages_history.reverse()
+
+        return answer
