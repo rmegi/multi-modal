@@ -2,8 +2,7 @@ import httpx
 import base64
 import os
 import time
-import hashlib
-from utils.prompts import gemma3_12b_prompt
+from utils.prompts import system_dog_option1
 
 
 class OllamaHandler:
@@ -13,14 +12,11 @@ class OllamaHandler:
             "OLLAMA_BASE_URL", "http://192.168.68.201:11434"
         )
         self.chat_url = f"{self.base_url}/api/chat"
-        self.messages_history = [{"role": "system", "content": gemma3_12b_prompt}]
+        self.messages_history = [{"role": "system", "content": system_dog_option1}]
         self._last_image_hash = None
 
-    def _hash_image(self, image_bytes):
-        return hashlib.sha256(image_bytes).hexdigest()
-
     def clear_chat(self):
-        self.messages_history = [{"role": "system", "content": gemma3_12b_prompt}]
+        self.messages_history = [{"role": "system", "content": system_dog_option1}]
         return "Chat history cleared."
 
     def get_chat_history(self):
@@ -34,14 +30,6 @@ class OllamaHandler:
             try:
                 with open(image_path, "rb") as img_file:
                     image_bytes = img_file.read()
-                    current_hash = self._hash_image(image_bytes)
-
-                    if self._last_image_hash == current_hash:
-                        print("⚠️ Same image as last time (hash unchanged)")
-                    else:
-                        print("✅ New image detected")
-                        self._last_image_hash = current_hash
-
                     base64_image = base64.b64encode(image_bytes).decode("utf-8")
                     user_message["images"] = [base64_image]
             except Exception as e:
