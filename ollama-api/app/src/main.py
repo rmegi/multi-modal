@@ -1,13 +1,11 @@
-import cv2
 from utils.ollama_handler import OllamaHandler
-
+from utils.utils import parse_response
 
 local_ai_agent = OllamaHandler(
-    model="gemma3:12b",
-    base_url="http://192.168.68.201:11434",
+    model="gemma3:12b", base_url="http://192.168.68.201:11434"
 )
 
-image_path = "image.png"
+image_path = "image3.png"  # Path to the image file, if needed
 
 
 def main():
@@ -18,23 +16,12 @@ def main():
             print("Exiting the chat. Goodbye!")
             break
 
-        # Capture the current image from the webcam.
-        try:
-            cap = cv2.VideoCapture(0)
-            ret, frame = cap.read()
-            if ret:
-                cv2.imwrite('image.png', frame)
-            else:
-                print("Failed to capture an image.")
-            cap.release()
-        except Exception as e:
-            print(f'Using default image ({e})')
-
         response = local_ai_agent.ask(prompt=user_input, image_path=image_path)
-        if response:
-            print(f"Bot: {response}")
+        parsed_response = parse_response(response)
+        if parsed_response:
+            print(f"{local_ai_agent.model}: {parsed_response.description}")
         else:
-            print("Bot: Sorry, I couldn't process that.")
+            print("Bro: Sorry bro, I couldn't process that.")
 
 
 if __name__ == "__main__":
