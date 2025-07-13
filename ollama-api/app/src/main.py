@@ -1,12 +1,12 @@
 from utils.ollama_handler import OllamaHandler
-
+from utils.utils import parse_response
 
 local_ai_agent = OllamaHandler(
-    model="gemma3:12b",
-    base_url="http://192.168.68.201:11434",
+    model="gemma3:12b", base_url="http://192.168.68.201:11434"
 )
 
 image_path = "bomb1.png"
+
 
 
 def main():
@@ -18,10 +18,11 @@ def main():
             break
 
         response = local_ai_agent.ask(prompt=user_input, image_path=image_path)
-        if response:
-            print(f"Bot: {response}")
+        parsed_response = parse_response(response)
+        if parsed_response:
+            print(f"{local_ai_agent.model}: {parsed_response.description}")
         else:
-            print("Bot: Sorry, I couldn't process that.")
+            print("Bro: Sorry bro, I couldn't process that.")
 
 
 if __name__ == "__main__":
