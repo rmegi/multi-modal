@@ -2,7 +2,13 @@ import httpx
 import base64
 import os
 import time
+from pydantic import BaseModel
 from utils.prompts import gemma3_12b_prompt_v2 as gemma_prompt
+
+
+class OllamaResponse(BaseModel):
+    description: str
+    treats: list[str]
 
 
 class OllamaHandler:
@@ -13,14 +19,7 @@ class OllamaHandler:
         )
         self.chat_url = f"{self.base_url}/api/chat"
         self.messages_history = [{"role": "system", "content": gemma_prompt}]
-        self.format = {
-            "type": "object",
-            "properties": {
-                "description": {"type": "string"},
-                "treats": {"type": "array", "items": {"type": "string"}},
-            },
-            "required": ["description", "treats"],
-        }
+        self.format = OllamaResponse.model_json_schema()
 
     def get_chat_history(self):
         return self.messages_history
