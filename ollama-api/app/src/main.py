@@ -1,3 +1,4 @@
+from urllib import response
 from utils.ollama_handler import OllamaHandler
 from utils.utils import parse_response
 
@@ -6,7 +7,6 @@ local_ai_agent = OllamaHandler(
 )
 
 image_path = "bomb1.png"
-
 
 
 def main():
@@ -18,9 +18,9 @@ def main():
             break
 
         response = local_ai_agent.ask(prompt=user_input, image_path=image_path)
-        parsed_response = parse_response(response)
-        if parsed_response:
-            print(f"{local_ai_agent.model}: {parsed_response.description}")
+        if response:
+            print(f"Bot: Description: {response.description}")
+            print(f"Bot: threats: {response.threats}")
         else:
             print("Bro: Sorry bro, I couldn't process that.")
 

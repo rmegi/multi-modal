@@ -1,3 +1,4 @@
+import json
 import httpx
 import base64
 import os
@@ -8,7 +9,7 @@ from utils.prompts import gemma3_12b_prompt_v2 as gemma_prompt
 
 class OllamaResponse(BaseModel):
     description: str
-    treats: list[str]
+    threats: list[str]
 
 
 class OllamaHandler:
@@ -24,7 +25,7 @@ class OllamaHandler:
     def get_chat_history(self):
         return self.messages_history
 
-    def ask(self, prompt, image_path=None, temperature=0):
+    def ask(self, prompt, image_path=None, temperature=0) -> OllamaResponse:
         user_message = {"role": "user", "content": prompt}
 
         if image_path:
@@ -49,16 +50,24 @@ class OllamaHandler:
         try:
             start_time = time.perf_counter()
             response = httpx.post(
-                self.chat_url, json=payload, timeout=20.0  # hard timeout
-            )
+                self.chat_url, json=payload, timeout=20.0
+            )  # hard timeout
             response.raise_for_status()
             duration = time.perf_counter() - start_time
             print(f"✅ Ollama responded in {duration:.2f}s")
 
-            result = response.json()
-            answer = result.get("message", {}).get("content", "")
+            result = response.json().get("message", {}).get("content", "")
 
-            return answer
+            try:
+                result_json = json.loads(result)
+                description = result_json.get("description", "")
+                threats = result_json.get("threats", [])
+            except json.JSONDecodeError:
+                print("❌ Failed to parse description JSON.")
+                description = ""
+                threats = []
+
+            return OllamaResponse(description=description, threats=threats)
 
         except httpx.TimeoutException:
             print("❌ Ollama request timed out (>20s).")
