@@ -2,7 +2,13 @@ import httpx
 import base64
 import os
 import time
-from utils.prompts import vision_prompt_v1
+from pydantic import BaseModel
+from utils.prompts import gemma3_12b_prompt_v2 as gemma_prompt
+
+
+class OllamaResponse(BaseModel):
+    description: str
+    treats: list[str]
 
 
 class OllamaHandler:
@@ -12,16 +18,11 @@ class OllamaHandler:
             "OLLAMA_BASE_URL", "http://192.168.68.201:11434"
         )
         self.chat_url = f"{self.base_url}/api/chat"
-        self.messages_history = [{"role": "system", "content": vision_prompt_v1}]
-        self.close_session_interval = 5
+        self.messages_history = [{"role": "system", "content": gemma_prompt}]
+        self.format = OllamaResponse.model_json_schema()
 
     def get_chat_history(self):
         return self.messages_history
-
-    def reset_session(self):
-        print("🔄 Resetting session context.")
-        self.messages_history = [{"role": "system", "content": vision_prompt_v1}]
-        self.close_session_interval = 5
 
     def ask(self, prompt, image_path=None, temperature=0):
         user_message = {"role": "user", "content": prompt}
@@ -42,6 +43,7 @@ class OllamaHandler:
             "stream": False,
             "temperature": temperature,
             "keep_alive": "10m",
+            "format": self.format,
         }
 
         try:
@@ -56,13 +58,6 @@ class OllamaHandler:
             result = response.json()
             answer = result.get("message", {}).get("content", "")
 
-            self.close_session_interval -= 1
-            if self.close_session_interval <= 0:
-                self.reset_session()
-
-            # Save only text prompt (no image) in history
-            self.messages_history.append({"role": "user", "content": prompt})
-            self.messages_history.append({"role": "assistant", "content": answer})
             return answer
 
         except httpx.TimeoutException:
