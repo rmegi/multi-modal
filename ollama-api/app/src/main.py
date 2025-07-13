@@ -1,4 +1,3 @@
-import cv2
 from utils.ollama_handler import OllamaHandler
 
 
@@ -7,11 +6,7 @@ local_ai_agent = OllamaHandler(
     base_url="http://192.168.68.201:11434",
 )
 
-<<<<<<< Updated upstream
-image_path = "image.png"
-=======
-image_path = "bomb1.png"  # Path to the image file, if needed
->>>>>>> Stashed changes
+image_path = "bomb1.png"
 
 
 def main():
@@ -21,18 +16,6 @@ def main():
         if user_input.lower() in ["exit", "quit"]:
             print("Exiting the chat. Goodbye!")
             break
-
-        # Capture the current image from the webcam.
-        try:
-            cap = cv2.VideoCapture(0)
-            ret, frame = cap.read()
-            if ret:
-                cv2.imwrite('image.png', frame)
-            else:
-                print("Failed to capture an image.")
-            cap.release()
-        except Exception as e:
-            print(f'Using default image ({e})')
 
         response = local_ai_agent.ask(prompt=user_input, image_path=image_path)
         if response:
