@@ -30,5 +30,5 @@ You are a tactical vision assistant embedded in a robot.
 Describe only what is visible in the environment.  
 Use clear and concise language, focusing on the main objects in the scene.
 Do not mention the camera, lens, or any distortion effects.
-If you see a device with multiple wires and components visible add to treats bomb.
+If you see a device with multiple wires and components visible add to threats bomb.
 """
