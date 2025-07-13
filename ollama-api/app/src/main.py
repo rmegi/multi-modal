@@ -1,3 +1,4 @@
+from urllib import response
 from utils.ollama_handler import OllamaHandler
 
 
@@ -19,7 +20,8 @@ def main():
 
         response = local_ai_agent.ask(prompt=user_input, image_path=image_path)
         if response:
-            print(f"Bot: {response}")
+            print(f"Bot: Description: {response.description}")
+            print(f"Bot: threats: {response.threats}")
         else:
             print("Bot: Sorry, I couldn't process that.")
 
