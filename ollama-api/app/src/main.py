@@ -7,7 +7,11 @@ local_ai_agent = OllamaHandler(
     base_url="http://192.168.68.201:11434",
 )
 
+<<<<<<< Updated upstream
 image_path = "image.png"
+=======
+image_path = "bomb1.png"  # Path to the image file, if needed
+>>>>>>> Stashed changes
 
 
 def main():
