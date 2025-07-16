@@ -1,15 +1,16 @@
 import json
+from typing import Dict
 import httpx
 import base64
 import os
 import time
 from pydantic import BaseModel
-from utils.prompts import gemma3_12b_prompt_v2 as gemma_prompt
+from utils.prompts import gemma3_12b_prompt_v3 as gemma_prompt
 
 
 class OllamaResponse(BaseModel):
     description: str
-    threats: list[str]
+    detected: Dict[str, int]
 
 
 class OllamaHandler:
@@ -55,19 +56,19 @@ class OllamaHandler:
             response.raise_for_status()
             duration = time.perf_counter() - start_time
             print(f"✅ Ollama responded in {duration:.2f}s")
-
             result = response.json().get("message", {}).get("content", "")
+            print(f"Response: {result}")
 
             try:
                 result_json = json.loads(result)
                 description = result_json.get("description", "")
-                threats = result_json.get("threats", [])
+                detected = result_json.get("detected", [])
             except json.JSONDecodeError:
                 print("❌ Failed to parse description JSON.")
                 description = ""
-                threats = []
+                detected = []
 
-            return OllamaResponse(description=description, threats=threats)
+            return OllamaResponse(description=description, detected=detected)
 
         except httpx.TimeoutException:
             print("❌ Ollama request timed out (>20s).")
