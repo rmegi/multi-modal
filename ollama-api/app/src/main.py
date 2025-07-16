@@ -20,7 +20,7 @@ def main():
         response = local_ai_agent.ask(prompt=user_input, image_path=image_path)
         if response:
             print(f"Bot: Description: {response.description}")
-            print(f"Bot: threats: {response.threats}")
+            print(f"Bot: detected: {response.detected}")
         else:
             print("Bro: Sorry bro, I couldn't process that.")
 
