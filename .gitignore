@@ -7,3 +7,26 @@ __pycache__
 *.pkl
 *.pyd
 *.db
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# pip cache and build artifacts
+*.egg-info/
+dist/
+build/
+
+# OS metadata files
+.DS_Store
+Thumbs.db
+
+# Installed packages
+site-packages/
