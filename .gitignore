@@ -34,3 +34,4 @@ site-packages/
 # Ignore Ultralytics YOLO model weights
 *.pt
 *.log
+
