@@ -30,3 +30,7 @@ Thumbs.db
 
 # Installed packages
 site-packages/
+
+# Ignore Ultralytics YOLO model weights
+*.pt
+*.log
