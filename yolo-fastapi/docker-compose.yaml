@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  yolo-server:
+    build: .
+    container_name: yolo-fastapi
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
