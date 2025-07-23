@@ -3,7 +3,7 @@ services:
     build:
       dockerfile: Dockerfile
     image: yolo-fastapi
-    command: ["python", "server.py"]
+    command: ["python", "main.py"]
     restart: on-failure:5
     logging:
       driver: "json-file"
