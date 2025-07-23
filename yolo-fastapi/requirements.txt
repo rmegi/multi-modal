@@ -1,6 +1,7 @@
 fastapi==0.116.1
 uvicorn==0.35.0
+opencv-python==4.8.0.76
+PyGObject==3.44.1
 ultralytics==8.3.168
-opencv-python-headless
 python-multipart
-numpy==1.24.4
+numpy==1.26.0

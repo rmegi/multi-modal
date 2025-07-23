@@ -4,12 +4,28 @@ FROM python:3.10
 # Set working directory
 WORKDIR /code
 
-# Install system dependencies for OpenCV and YOLO
-RUN apt-get update && apt-get install -y --no-install-recommends \
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     ffmpeg \
     libgl1 \
     git \
-    && rm -rf /var/lib/apt/lists/*
+    tcpdump \
+    iputils-ping \
+    gstreamer1.0-tools \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-libav \
+    libcairo2-dev \
+    libgirepository1.0-dev \
+    python3-gi \
+    python3-gi-cairo \
+    gir1.2-gstreamer-1.0 \
+    gir1.2-gtk-3.0 \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*  
 
 # Copy and install Python dependencies
 COPY requirements.txt .

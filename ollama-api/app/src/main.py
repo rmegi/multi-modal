@@ -3,6 +3,7 @@ from urllib import response
 import requests
 from utils.ollama_handler import OllamaHandler
 from utils.utils import parse_response
+import time
 
 local_ai_agent = OllamaHandler(
     model="gemma3:12b", base_url="http://192.168.68.201:11434"
@@ -14,7 +15,10 @@ image_path = "bomb3.png"
 def main():
     with open(image_path, "rb") as f:
         files = {"file": f}
-        response = requests.post("http://localhost:9000/detect", files=files)
+        start_time = time.time()
+        response = requests.post("http://100.94.195.34:9000/detect", files=files)
+        elapsed_time = time.time() - start_time
+        print(f"Request took {elapsed_time:.2f} seconds")
     print(response.json())
 
     # print("Welcome to the Ollama Chatbot!")

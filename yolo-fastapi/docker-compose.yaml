@@ -4,6 +4,7 @@ services:
   yolo-server:
     build: .
     container_name: yolo-fastapi
+
     ports:
       - "9000:9000"
     volumes:
