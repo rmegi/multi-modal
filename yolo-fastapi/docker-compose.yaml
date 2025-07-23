@@ -1,14 +1,17 @@
-version: "3.9"
-
 services:
-  yolo-server:
-    build: .
-    container_name: yolo-fastapi
+  yolo-fastapi:
+    build:
+      dockerfile: Dockerfile
+    image: yolo-fastapi
+    command: ["python", "server.py"]
+    restart: on-failure:5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    network_mode: "host"
 
-    ports:
-      - "9000:9000"
-    volumes:
-      - ./app:/app
-    environment:
-      - PYTHONUNBUFFERED=1
-    restart: unless-stopped
+networks:
+  mynetwork:
+    driver: bridge
