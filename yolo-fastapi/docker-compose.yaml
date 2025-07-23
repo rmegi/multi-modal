@@ -5,7 +5,7 @@ services:
     build: .
     container_name: yolo-fastapi
     ports:
-      - "8000:8000"
+      - "9000:9000"
     volumes:
       - ./app:/app
     environment:
