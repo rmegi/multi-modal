@@ -1,9 +1,8 @@
 services:
-  yolo-server:
+  yolo-fastapi:
     build:
-      context: ./yolo-server
       dockerfile: Dockerfile
-    image: yolo-server
+    image: yolo-fastapi
     command: ["python", "server.py"]
     restart: on-failure:5
     logging:
