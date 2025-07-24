@@ -12,6 +12,7 @@ import logging
 import sys
 from ultralytics import YOLOE
 import torch
+from app.prompt_manager import PromptManager
 
 # Initialize GStreamer
 gi.require_version("Gst", "1.0")
@@ -20,9 +21,11 @@ from gi.repository import Gst
 Gst.init(None)
 print(torch.cuda.is_available())
 
-# Load YOLO model
+prompt_path = "prompt.json"
+prompt_manager = PromptManager(prompt_path)
+
 model = YOLOE("yoloe-11s-seg.pt")
-OBJECT_CLASSES = ["person", "weapon", "stairs", "house", "door", "window"]
+OBJECT_CLASSES = prompt_manager.get_prompts()
 model.set_classes(OBJECT_CLASSES, model.get_text_pe(OBJECT_CLASSES))
 
 
@@ -208,6 +211,17 @@ def start_pipeline():
 @app.on_event("startup")
 def startup_event():
     start_pipeline()
+
+
+@app.get("/update_prompt")
+def update_prompt(new_classes: list[str]):
+    prompt_manager.update_prompt(new_classes)
+    return {"status": "success", "new_classes": prompt_manager.get_prompts()}
+
+
+@app.get("/get_prompt")
+def get_prompt():
+    return {"status": "success", "classes": prompt_manager.get_prompts()}
 
 
 @app.get("/video")
