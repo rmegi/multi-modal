@@ -10,6 +10,7 @@ import time
 import gi
 import logging
 import sys
+from pydantic import BaseModel
 from ultralytics import YOLOE
 import torch
 from prompt_manager import PromptManager
@@ -27,6 +28,10 @@ prompt_manager = PromptManager(prompt_path)
 model = YOLOE("yoloe-11s-seg.pt")
 OBJECT_CLASSES = prompt_manager.get_prompts()
 model.set_classes(OBJECT_CLASSES, model.get_text_pe(OBJECT_CLASSES))
+
+
+class PromptUpdateRequest(BaseModel):
+    new_classes: list[str]
 
 
 # Async inference
@@ -213,9 +218,9 @@ def startup_event():
     start_pipeline()
 
 
-@app.get("/update_prompt")
-def update_prompt(new_classes: list[str]):
-    prompt_manager.update_prompt(new_classes)
+@app.post("/update_prompt")
+def update_prompt(payload: PromptUpdateRequest):
+    prompt_manager.update_prompt(payload.new_classes)
     return {"status": "success", "new_classes": prompt_manager.get_prompts()}
 
 
