@@ -12,7 +12,7 @@ import logging
 import sys
 from ultralytics import YOLOE
 import torch
-from app.prompt_manager import PromptManager
+from prompt_manager import PromptManager
 
 # Initialize GStreamer
 gi.require_version("Gst", "1.0")
