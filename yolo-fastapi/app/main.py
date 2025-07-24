@@ -221,7 +221,9 @@ def startup_event():
 @app.post("/update_prompt")
 def update_prompt(payload: PromptUpdateRequest):
     prompt_manager.update_prompt(payload.new_classes)
-    return {"status": "success", "new_classes": prompt_manager.get_prompts()}
+    new_classes = prompt_manager.get_prompts()
+    model.set_classes(new_classes, model.get_text_pe(new_classes))
+    return {"status": "success", "new_classes": new_classes}
 
 
 @app.get("/get_prompt")
