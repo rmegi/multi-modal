@@ -25,3 +25,10 @@ curl -X POST http://localhost:8000/update_prompt \
   -H "Content-Type: application/json" \
   -d '{"new_classes": ["person", "car", "dog"]}'
 ```
+## Update the prompt for YOLOE model
+
+```bash
+curl -X POST http://localhost:9000/update_prompt \
+  -H "Content-Type: application/json" \
+  -d '{"new_classes": ["person", "car", "dog"]}'
+```
