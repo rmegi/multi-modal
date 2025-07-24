@@ -17,6 +17,11 @@ A FastAPI application that performs real-time object detection using [Ultralytic
 ## 📡 GStreamer Pipeline
 
 Make sure your GStreamer pipeline is sending frames the server IP:
+
 ```bash
 curl -X POST http://192.168.68.124:5000/set_rcu_ip
 
+curl -X POST http://localhost:8000/update_prompt \
+  -H "Content-Type: application/json" \
+  -d '{"new_classes": ["person", "car", "dog"]}'
+```
